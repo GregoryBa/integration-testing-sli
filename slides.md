@@ -97,7 +97,7 @@ Tests must be short and concise
 </div>
 
 <div style="margin-bottom: 20px;" v-click>
-Grand goal of testing: being able to trust tests in a way where any changes made to the codebase can be pushed<span v-mark.underscore.orange="6"> without or with minimal manual testing. </span>
+Grand goal of testing: being able to trust tests in a way where any changes made to the codebase can be pushed<span v-mark.underscore.orange="6"> without or minimal manual testing. </span>
 </div>
 
 ---
@@ -126,7 +126,7 @@ transition: slide-left
 public class GetUserInformation()
 {
   [Fact]
-    public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin() {
+    public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner() {
       // Arrange
       var userNumber = "123456789";
 
@@ -170,7 +170,7 @@ transition: slide-left
 public class GetUserInformation()
 {
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin() {
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner() {
     // Arrange
     var userNumber = "123456789";
 
@@ -188,9 +188,10 @@ public class GetUserInformation()
 }
 ```
 ```csharp
+public class GetUserInformation()
 {
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin() {
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner() {
     // Arrange
     var userNumber = "123456789";
 
@@ -246,6 +247,9 @@ transition: slide-left
                     {
                         options.UseInMemoryDatabase("InMemoryDbForTesting");
                     });
+                    // Or even better use Testcontainers library
+                    // to spin up docker container for more real 
+                    // database instance
                     foreach (var service in testServices)
                     {
                         services.Add(service);
@@ -291,7 +295,7 @@ transition: slide-left
 ````md magic-move {lines: true}
 ```csharp {*}
 [Fact]
-public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin() {
+public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner() {
   // Arrange
   var userNumber = "123456789";
 
@@ -305,7 +309,7 @@ public async Task Should_return_users_information_if_user_number_exists_and_user
 ```
 ```csharp
 [Fact]
-public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin() {
+public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner() {
   // Arrange
   var factory = ServiceApiFactory.WebApplicationFactory<IApiMarker>(testServices: null, enableTestAuthPolicy: false);
   var client = factory.CreateClient();
@@ -322,7 +326,7 @@ public async Task Should_return_users_information_if_user_number_exists_and_user
 ```
 ```csharp
 [Fact]
-public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin() {
+public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner() {
   // Arrange
   // Fake external dependency
   // .. 
@@ -404,7 +408,7 @@ public class ServiceApiFakeOwnerFixture
     
     this.ClientWithFakeOwnerAuth = clientBuilder
       .EnableTestAuthPolicy()
-      .AddScopedFaker<RealServiceToOverride, FakeService>(new FakeService({...}))
+      .AddScopedFaker<RealServiceToOverride, FakeService>(new FakeService({..., NullLogger<FakeService>.Instance}))
       .AddScopedFaker<IAuthenticationService, FakeOwnerAuthenticationService>(new FakeOwnerAuthenticationService())
       .Build();
   }
@@ -422,7 +426,7 @@ transition: slide-left
 public class GetUserInformationTests
 {
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin() {
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner() {
     // Arrange
     // Fake external dependency
     // .. 
@@ -444,7 +448,7 @@ public class GetUserInformationTests
 public class GetUserInformationTests
 {
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Remove arrange
     // Act
@@ -463,7 +467,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   fakeOwnerFixture.ClientWithFakeOwnerAuth;
 
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = await client.GetAsync($"user-information/{userNumber}");
@@ -498,7 +502,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
         new Telephone("12345654"));
 
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = await client.GetAsync($"user-information/{userNumber}");
@@ -524,7 +528,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = await client.GetAsync($"user-information/{userNumber}");
@@ -551,14 +555,14 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
-    // Assert
 
+    // Assert
     this.AssertUserInformationResponse(userInformationResponse);
   }
 }
@@ -579,7 +583,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
@@ -604,13 +608,13 @@ transition: slide-left
         {
             response = await performRequestAsync;
             response?.EnsureSuccessStatusCode();
-            return response == null ? Result<HttpResponseMessage>.Fail(new LyseException(LyseErrorType.Dependency, errorMessage ?? "No response")) : Result<HttpResponseMessage>.Ok(response);
+            return response == null ? Result<HttpResponseMessage>.Fail(new Exception(ErrorType.Dependency, errorMessage ?? "No response")) : Result<HttpResponseMessage>.Ok(response);
         }
         catch (Exception e)
         {
             if (response?.Content == null)
             {
-                return Result<HttpResponseMessage>.Fail(new LyseException(LyseErrorType.Dependency, errorMessage ?? e.Message, e));
+                return Result<HttpResponseMessage>.Fail(new Exception(ErrorType.Dependency, errorMessage ?? e.Message, e));
             }
 
             try
@@ -619,10 +623,10 @@ transition: slide-left
             }
             catch
             {
-                return Result<HttpResponseMessage>.Fail(new LyseException(LyseErrorType.Dependency, errorMessage ?? e.Message, e));
+                return Result<HttpResponseMessage>.Fail(new Exception(ErrorType.Dependency, errorMessage ?? e.Message, e));
             }
 
-            return Result<HttpResponseMessage>.Fail(new LyseException(LyseErrorType.Dependency, errorMessage ?? e.Message, e));
+            return Result<HttpResponseMessage>.Fail(new Exception(ErrorType.Dependency, errorMessage ?? e.Message, e));
         }
     }
 ```
@@ -649,7 +653,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public async Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
@@ -669,7 +673,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
@@ -688,7 +692,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = clientWithFakeOwnerAuth
@@ -710,7 +714,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = clientWithFakeOwnerAuth
@@ -735,7 +739,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = clientWithFakeOwnerAuth
@@ -743,7 +747,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
       .Try(logger, "optional exception message")
       .Bind(x => x.Content.ReadAsStringAsync()
         .Try(logger))
-      .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)!));
+      .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)));
         
     // Assert
     this.AssertUserInformationResponse(userInformationResponse);
@@ -759,7 +763,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
     var response = clientWithFakeOwnerAuth
@@ -767,7 +771,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
       .Try(logger, "optional exception message")
       .Bind(x => x.Content.ReadAsStringAsync()
         .Try(logger))
-      .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)!))
+      .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
   }
 }
@@ -781,14 +785,14 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public Task Should_return_users_information_if_user_number_exists_and_user_is_admin()
+  public Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     var response = clientWithFakeOwnerAuth
       .GetAsync($"user-information/{userNumber}")
       .Try(logger, "optional exception message")
       .Bind(x => x.Content.ReadAsStringAsync()
         .Try(logger))
-      .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)!))
+      .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
   }
 }
@@ -802,13 +806,13 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   private readonly UserInformation.GetUserInformation requestedUser = FakeUser.ValidCustomer();
 
   [Fact]
-  public Task Should_return_users_information_if_user_number_exists_and_user_is_admin() =>
+  public Task Should_return_users_information_if_user_number_exists_and_user_is_owner() =>
     clientWithFakeOwnerAuth
       .GetAsync($"user-information/{userNumber}")
       .Try(logger, "optional exception message")
       .Bind(x => x.Content.ReadAsStringAsync()
         .Try(logger))
-      .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)!))
+      .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
 }
 ```
@@ -872,7 +876,7 @@ public class FakeOwnerAuthenticationService : IAuthenticationService
 
     public Task<Result<CustomerNumber>> GetCustomerNumber(string customerNumber) =>
         Task.FromResult((new OwnerCustomerNumber(customerNumber) as CustomerNumber)
-            .AsResult(() => new LyseException(LyseErrorType.Forbidden, $"Customer number is not a testing customer number")));
+            .AsResult(() => new Exception(ErrorType.Forbidden, $"Customer number is not a testing customer number")));
     
     private Result<CustomerNumbers> ValidTestCustomerNumbers() => throw new NotImplementedException();
 }
