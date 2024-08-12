@@ -229,7 +229,7 @@ transition: slide-left
                 {
                     // Remove services
                     services.Remove(services.SingleOrDefault(descriptor => descriptor.ServiceType == 
-                    typeof(DbContextOptions<PostgresDbContext>)));
+                    typeof(DbContext<PostgresDbContext>)));
                     services.Remove(services.SingleOrDefault(descriptor => descriptor.ServiceType == 
                     typeof(NpgSqlHealthCheck)));
                     services.Remove(services.SingleOrDefault(descriptor => descriptor.ServiceType == 
@@ -470,7 +470,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await client.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -505,7 +505,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await client.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -531,7 +531,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await client.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -823,13 +823,10 @@ level: 2
 ---
 # Thank you
 
-Github link to the presentation:
+Repo with presentation (Slidev)
+https://github.com/GregoryBa/integration-testing-sli
 
-More things to add: 
-- TestContainers instead of InMemoryDb
-- NullLogger
-- NSubstitute
-- Bogus
+<img src="qr.png" alt="qr" width="200" height="200"/>
 
 
 ---
@@ -867,7 +864,7 @@ internal sealed class TestingPolicyEvaluator : IPolicyEvaluator
 transition: slide-up
 level: 2
 ---
-# Fake Authentication Serivce
+# Fake Authentication Service
 ```csharp
 public class FakeOwnerAuthenticationService : IAuthenticationService
 {
