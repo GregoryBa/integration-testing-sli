@@ -643,7 +643,7 @@ transition: slide-left
 ---
 transition: slide-left
 ---
-# Bonus Step 9 : Get rid of async
+# Bonus Step 9 : Get rid of async and apply functional methods
 ````md magic-move {lines: true}
 ```csharp {*}
 public class GetUserInformationTests(ServiceApiFakeOwnerFixture fakeOwnerFixture) : 
