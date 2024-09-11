@@ -452,7 +452,7 @@ public class GetUserInformationTests
   {
     // Remove arrange
     // Act
-    var response = await client.GetAsync($"user-information/{userNumber}");
+    var response = await client.GetAsync("user-information/123456789");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -470,7 +470,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync("user-information/123456789");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -494,7 +494,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
 
   public static GetUserInformation ValidCustomer() =>
     new(
-        new UserNumber("1234567890"),
+        new UserNumber("ValidCustomer.UserNumber"),
         new Name("name", "lastname"),
         new Address("Address 12345B", "1234", "Bergen", "Norway"),
         Birthday.TryCreate(1990, 01, 01),
@@ -505,7 +505,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{ValidCustomer.CustomerNumber.Number}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -531,7 +531,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{requestedUser.CustomerNumber.Number}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -558,7 +558,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{requestedUser.CustomerNumber.Number}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
 
@@ -586,7 +586,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{requestedUser.CustomerNumber.Number}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -607,7 +607,6 @@ transition: slide-left
         try
         {
             response = await performRequestAsync;
-            response?.EnsureSuccessStatusCode();
             return response == null ? Result<HttpResponseMessage>.Fail(new Exception(ErrorType.Dependency, errorMessage ?? "No response")) : Result<HttpResponseMessage>.Ok(response);
         }
         catch (Exception e)
@@ -656,7 +655,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public async Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
+    var response = await clientWithFakeOwnerAuth.GetAsync($"user-information/{requestedUser.CustomerNumber.Number}");
     var content = await response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -676,7 +675,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     // Act
-    var response = clientWithFakeOwnerAuth.GetAsync($"user-information/{userNumber}");
+    var response = clientWithFakeOwnerAuth.GetAsync($"user-information/{requestedUser.CustomerNumber.Number}");
     var content = response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -696,7 +695,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   {
     // Act
     var response = clientWithFakeOwnerAuth
-      .GetAsync($"user-information/{userNumber}")
+      .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
       .Try(logger, "optional exception message");
     var content = response.Content.ReadAsStringAsync();
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
@@ -718,10 +717,10 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   {
     // Act
     var response = clientWithFakeOwnerAuth
-      .GetAsync($"user-information/{userNumber}")
-      .Try(logger, "optional exception message")
+      .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
+      .Try()
       .Bind(x => x.Content.ReadAsStringAsync()
-        .Try(logger));
+        .Try());
 
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -743,10 +742,10 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   {
     // Act
     var response = clientWithFakeOwnerAuth
-      .GetAsync($"user-information/{userNumber}")
-      .Try(logger, "optional exception message")
+      .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
+      .Try()
       .Bind(x => x.Content.ReadAsStringAsync()
-        .Try(logger))
+        .Try())
       .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)));
         
     // Assert
@@ -767,10 +766,10 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   {
     // Act
     var response = clientWithFakeOwnerAuth
-      .GetAsync($"user-information/{userNumber}")
-      .Try(logger, "optional exception message")
+      .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
+      .Try()
       .Bind(x => x.Content.ReadAsStringAsync()
-        .Try(logger))
+        .Try())
       .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
   }
@@ -788,10 +787,10 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   public Task Should_return_users_information_if_user_number_exists_and_user_is_owner()
   {
     var response = clientWithFakeOwnerAuth
-      .GetAsync($"user-information/{userNumber}")
-      .Try(logger, "optional exception message")
+      .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
+      .Try()
       .Bind(x => x.Content.ReadAsStringAsync()
-        .Try(logger))
+        .Try())
       .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
   }
@@ -808,10 +807,10 @@ IClassFixture<ServiceApiFakeOwnerFixture>
   [Fact]
   public Task Should_return_users_information_if_user_number_exists_and_user_is_owner() =>
     clientWithFakeOwnerAuth
-      .GetAsync($"user-information/{userNumber}")
-      .Try(logger, "optional exception message")
+      .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
+      .Try()
       .Bind(x => x.Content.ReadAsStringAsync()
-        .Try(logger))
+        .Try())
       .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
 }
