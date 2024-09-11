@@ -719,8 +719,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
     var response = clientWithFakeOwnerAuth
       .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
       .Try()
-      .Bind(x => x.Content.ReadAsStringAsync()
-        .Try());
+      .Bind(x => x.Content.ReadAsStringAsync().Try());
 
     var userInformationResponse = Json.Deserialize<UserInformationDto>(content);
     // Assert
@@ -744,8 +743,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
     var response = clientWithFakeOwnerAuth
       .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
       .Try()
-      .Bind(x => x.Content.ReadAsStringAsync()
-        .Try())
+      .Bind(x => x.Content.ReadAsStringAsync().Try())
       .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)));
         
     // Assert
@@ -768,8 +766,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
     var response = clientWithFakeOwnerAuth
       .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
       .Try()
-      .Bind(x => x.Content.ReadAsStringAsync()
-        .Try())
+      .Bind(x => x.Content.ReadAsStringAsync().Try())
       .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
   }
@@ -789,8 +786,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
     var response = clientWithFakeOwnerAuth
       .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
       .Try()
-      .Bind(x => x.Content.ReadAsStringAsync()
-        .Try())
+      .Bind(x => x.Content.ReadAsStringAsync().Try())
       .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
   }
@@ -809,8 +805,7 @@ IClassFixture<ServiceApiFakeOwnerFixture>
     clientWithFakeOwnerAuth
       .GetAsync($"user-information/{requestedUser.CustomerNumber.Number}")
       .Try()
-      .Bind(x => x.Content.ReadAsStringAsync()
-        .Try())
+      .Bind(x => x.Content.ReadAsStringAsync().Try())
       .Bind(s => Result<UserInformationDto>.Ok(Json.Deserialize<UserInformationDto>(s)))
       .Bind(this.AssertContactInformationResponse);
 }
